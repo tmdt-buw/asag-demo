@@ -1,0 +1,13 @@
+<div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center" class="all">
+  <!-- The left side of the demonstrator. -->
+  <div fxLayout="column" class="selfmade-menu">
+    <p class="explanation-text">{{explanationText}}</p>
+    <nz-divider></nz-divider>
+    bla bla bla
+  </div>
+
+  <!-- The right side of the demonstrator. -->
+  <div fxLayout="column" fxLayoutAlign="space-between center" class="image-area">
+    <img *ngFor="let imgSource of previewImages" class="aoi_image" id="target" [src]="imgSource" alt="Girl in a jacket" [height]="imageHeight">
+  </div>
+</div>
