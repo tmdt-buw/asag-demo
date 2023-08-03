@@ -1,13 +1,93 @@
-<div *ngIf="!loading" fxLayout="row" fxLayoutAlign="center center" class="all">
-  <!-- The left side of the demonstrator. -->
-  <div fxLayout="column" class="selfmade-menu">
-    <p class="explanation-text">{{explanationText}}</p>
-    <nz-divider></nz-divider>
-    bla bla bla
+<nz-layout fxFill>
+  <div class="border-bottom-grey" fxLayoutAlign="space-between center">
+    <img nz-image class="no_pointer_events asag-logo" nzSrc="assets/asag_logo.png"/>
+    <div class="header-title">ASaG Demonstrator</div>
+    <img nz-image class="no_pointer_events buw-tmdt-logo" nzSrc="assets/tmdt.png"/>
   </div>
 
-  <!-- The right side of the demonstrator. -->
-  <div fxLayout="column" fxLayoutAlign="space-between center" class="image-area">
-    <img *ngFor="let imgSource of previewImages" class="aoi_image" id="target" [src]="imgSource" alt="Girl in a jacket" [height]="imageHeight">
-  </div>
-</div>
+  <nz-content fxLayout="row" fxLayoutAlign="center center" class="all">
+      <!-- The left side of the demonstrator. -->
+      <div *ngIf="!started" fxLayout="column" class="selfmade-menu">
+        <p class="explanation-text">{{projectDescription}}</p>
+        <nz-divider></nz-divider>
+        <button nz-button (click)="started = true">Start</button>
+      </div>
+
+    <div *ngIf="started" fxLayout="column" class="selfmade-menu">
+      <p class="explanation-text">{{explanationText}}</p>
+      <nz-divider></nz-divider>
+
+      <div class="radio-button-wrapper" fxLayout="column" fxLayoutAlign="center " fxLayoutGap="5px">
+        <nz-radio-group [(ngModel)]="chosenDamageType" (ngModelChange)="changePreviewImages()" nzSize="large" nzButtonStyle="solid">
+          <label nz-radio-button nzValue="steps">Steps</label>
+        </nz-radio-group>
+        <nz-radio-group [(ngModel)]="chosenDamageType" (ngModelChange)="changePreviewImages()" nzSize="large" nzButtonStyle="solid">
+          <label nz-radio-button nzValue="rungen">Rungen</label>
+        </nz-radio-group>
+        <nz-radio-group [(ngModel)]="chosenDamageType" (ngModelChange)="changePreviewImages()" nzSize="large" nzButtonStyle="solid">
+          <label nz-radio-button nzValue="holes">Holes</label>
+        </nz-radio-group>
+      </div>
+
+      <nz-divider></nz-divider>
+      <button nz-button [disabled]="maskButtonVisible" *ngIf="boundingBoxButtonVisible" (click)="showBoundingBoxImages()">Detect</button>
+      <nz-divider *ngIf="boundingBoxButtonVisible"></nz-divider>
+      <button nz-button *ngIf="maskButtonVisible" (click)="showMaskImages()">Mask</button>
+    </div>
+
+      <!-- The right side of the demonstrator. -->
+      <div class="image-area" id="image-area">
+        <div style="height: 100%" *ngIf="!loading && !started" fxLayout="column" fxLayoutAlign="space-evenly">
+          <div fxLayout="row" fxLayoutAlign="space-around">
+            <video #videoPlayer1 (ended)="videoPlayer2.play()" [autoplay]="true" [muted]="true" preload="auto" [height]="videoHeight">
+              <source src="assets/videos/Media1.mp4">
+            </video>
+
+            <video #videoPlayer2 (ended)="videoPlayer3.play()" [autoplay]="false" [muted]="true" preload="auto" [height]="videoHeight">
+              <source src="assets/videos/Media2.mp4">
+            </video>
+          </div>
+
+          <div fxLayout="row" fxLayoutAlign="space-around">
+            <video #videoPlayer3 (ended)="videoPlayer4.play()" [autoplay]="false" [muted]="true" preload="auto" [height]="videoHeight">
+              <source src="assets/videos/Media3.mp4">
+            </video>
+
+            <video #videoPlayer4 (ended)="videoPlayer1.play()" [autoplay]="false" [muted]="true" preload="auto" [height]="videoHeight">
+              <source src="assets/videos/Media4.mp4">
+            </video>
+          </div>
+        </div>
+
+        <div style="height: 100%" *ngIf="!loading && started">
+          <div style="height: 100%" *ngIf="!bbButtonPressed" fxLayout="column" fxLayoutAlign="space-evenly center">
+            <img *ngFor="let imgSource of previewImages" class="aoi_image" [src]="imgSource" alt="Girl in a jacket" [height]="imageHeight">
+          </div>
+
+          <div style="height: 100%" *ngIf="bbButtonPressed" fxLayout="column" fxLayoutAlign="space-evenly center">
+            <map *ngFor="let coord of coords, let idx=index" name="aoi_{{idx}}">
+              <area *ngFor="let c of coord, let i=index"
+                    shape="rect" alt="Area of Interest"
+                    nz-popover
+                    nzPopoverTrigger="hover"
+                    [nzPopoverContent]="damagedPartTpl"
+                    nzPopoverPlacement="bottom"
+                    (nzPopoverVisibleChange)="change(idx, i)"
+                    coords="{{c.x1}} {{c.y1}} {{c.x2}} {{c.y2}}"
+                    (mouseenter)="mouseEnteredArea(idx, i)"
+                    (mouseleave)="mouseLeftArea()">
+            </map>
+            <img *ngFor="let imgSource of previewImages, let i=index" useMap="#aoi_{{i}}"  class="aoi_image" id="target_{{i}}" [src]="imgSource" alt="Girl with a box" [height]="imageHeight">
+          </div>
+        </div>
+
+        <div style="height: 100%" *ngIf="loading" fxLayout="column" fxLayoutAlign="center center">
+          <nz-spin [nzSpinning]="loading" nzSize="large"></nz-spin>
+        </div>
+      </div>
+  </nz-content>
+</nz-layout>
+
+<ng-template #damagedPartTpl>
+  <img [src]="enhancedDamagedPartSrc" alt="A damaged train part. Due." height="400">
+</ng-template>
