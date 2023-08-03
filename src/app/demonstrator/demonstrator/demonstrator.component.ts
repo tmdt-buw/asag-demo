@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { positionInPercentage } from '../positionsBB/positions';
 
 @Component({
@@ -83,7 +83,7 @@ export class DemonstratorComponent implements OnInit {
   }
 
   calculateBBcoords(height, maxWidth): void {
-    positionInPercentage[this.chosenDamageType].forEach((imgInfo, idx) => {
+    positionInPercentage[this.chosenDamageType].forEach((imgInfo) => {
       const scalingFactor: number = (height / imgInfo.original_y);
       const theoreticalNewWidth: number = (imgInfo.original_x * scalingFactor);
       const width = theoreticalNewWidth > maxWidth ? maxWidth : theoreticalNewWidth;
