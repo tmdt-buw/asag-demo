@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { positionInPercentage } from '../positionsBB/positions';
+import {segmentationText, explanationText, projectDescription, damageDescriptions} from "../descriptionTexts";
 
 @Component({
   selector: 'app-demonstrator',
@@ -8,7 +9,9 @@ import { positionInPercentage } from '../positionsBB/positions';
 })
 export class DemonstratorComponent implements OnInit {
   loading: boolean = true;
-  previewImages: string[] = []
+  shownImages: string[] = []
+  segImages: string[] = []
+  maskImages: string[] = []
   imageHeight: number = 0;
   videoHeight: number = 0;
 
@@ -16,6 +19,9 @@ export class DemonstratorComponent implements OnInit {
   boundingBoxButtonVisible: boolean = false;
   maskButtonVisible: boolean = false;
   bbButtonPressed: boolean = false;
+  maskButtonPressed: boolean = false;
+
+  damagedPartModalVisible: boolean = false;
 
   enhancedDamagedPartSrc: string = undefined;
 
@@ -35,15 +41,9 @@ export class DemonstratorComponent implements OnInit {
     }
   }
 
-  projectDescription: string = `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-   labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
-   Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-   labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.`;
-
-  explanationText: string = this.projectDescription.split("").reverse().join("");
-
   coords: { x1: number, y1: number, x2: number, y2: number }[][] = [];
   private amountLoaded: number = 0;
+
   started: boolean = false;
 
   ngOnInit(): void {
@@ -79,7 +79,7 @@ export class DemonstratorComponent implements OnInit {
     while (imageSet.size < 5) {
       imageSet.add(this.selectImage());
     }
-    this.previewImages = Array.from(imageSet.values());
+    this.shownImages = Array.from(imageSet.values());
   }
 
   calculateBBcoords(height, maxWidth): void {
@@ -106,11 +106,13 @@ export class DemonstratorComponent implements OnInit {
     const height: number = img_area.clientHeight;
     const width: number = img_area.clientWidth * .9;
 
-    this.imageHeight = (height * 0.98) / amount;
-    this.imageHeight = this.imageHeight - 1.5*(this.imageHeight / 100);
+    if (this.imageHeight !== (height * 0.98) / amount) {
+      this.imageHeight = (height * 0.98) / amount;
+      this.imageHeight = this.imageHeight - 1.5 * (this.imageHeight / 100);
+    }
 
     this.coords = []
-    if (this.bbButtonPressed) {
+    if (this.chosenDamageType) {
       this.calculateBBcoords(this.imageHeight, width);
     }
   }
@@ -119,38 +121,45 @@ export class DemonstratorComponent implements OnInit {
     const pics = this.pictures[this.chosenDamageType];
     const src: string = pics.imgSource;
 
-    this.previewImages = []
     pics.images.forEach((i: number) => {
-      this.previewImages.push(`${src}/` + pre + `${this.chosenDamageType}_${i}` + fileType)
+      this.shownImages.push(`${src}/` + pre + `${this.chosenDamageType}_${i}` + fileType)
+      this.segImages.push(`${src}/` + 'seg_' + `${this.chosenDamageType}_${i}` + fileType)
+      this.maskImages.push(`${src}/` + 'mask_' + `${this.chosenDamageType}_${i}` + '.png')
     });
-    this.calculateImageHeight(this.previewImages.length);
+
+    this.calculateImageHeight(this.shownImages.length);
+  }
+
+  resetEverything(): void {
+    this.bbButtonPressed = false;
+    this.maskButtonPressed = false;
+    this.maskButtonVisible = false;
+    this.boundingBoxButtonVisible = false;
+    this.shownImages = []
+    this.segImages = []
+    this.maskImages = []
+
+    this.amountLoaded = 0;
   }
 
   changePreviewImages(): void {
     this.loading = true;
-    this.bbButtonPressed = false;
-    this.maskButtonVisible = false;
-    this.setImages()
-    this.boundingBoxButtonVisible = true;
+
+    this.resetEverything();
+    this.setImages();
     this.loadImages();
-    // this.loading = false;
+
+    this.boundingBoxButtonVisible = true;
   }
 
   showBoundingBoxImages(): void {
-    this.loading = true;
+    this.calculateImageHeight(this.shownImages.length);
     this.bbButtonPressed = true;
-    this.setImages('seg_', '.jpg')
     this.maskButtonVisible = true;
-    this.loadImages();
-    // this.loading = false;
   }
 
   showMaskImages(): void {
-    this.loading = true;
-    this.bbButtonPressed = false;
-    this.setImages('mask_', '.png');
-    this.loadImages();
-    // this.loading = false;
+    this.maskButtonPressed = true;
   }
 
   mouseEnteredArea(image_idx, damage_idx: number) {
@@ -162,41 +171,59 @@ export class DemonstratorComponent implements OnInit {
   }
 
   change(image_idx: number, damage_idx: number) {
-    let suf = "";
-    if (this.chosenDamageType != 'steps') {
-      suf = `_${damage_idx}`
-    }
     const src = this.pictures[this.chosenDamageType].imgSource;
-    this.enhancedDamagedPartSrc = `${src}/` + 'crop_' + `${this.chosenDamageType}_${image_idx+1}` + `${suf}` + `.jpg`
+    this.enhancedDamagedPartSrc = `${src}/` + 'crop_' + `${this.chosenDamageType}_${image_idx+1}` + `_${damage_idx}` + `.jpg`
   }
 
-  loadImages() {
-    this.amountLoaded = 0;
-    for(let prevImage of this.previewImages) {
+  loadImages(): void {
+    this.shownImages.forEach((src, i) => {
       let img = new Image();
       let segImg = new Image();
       let maskImg = new Image();
 
       img.onload = () => {
-        this.loaded();
+        this.loaded()
       }
 
       segImg.onload = () => {
-        this.loaded();
+        this.loaded()
       }
 
       maskImg.onload = () => {
-        this.loaded();
+        this.loaded()
       }
 
-      img.src = prevImage;
-    }
+      img.src = src;
+      segImg.src = this.segImages[i];
+      maskImg.src = this.maskImages[i];
+    })
   }
 
   loaded() {
     this.amountLoaded+=1;
-    if (this.amountLoaded === this.previewImages.length) {
+    if (this.amountLoaded === (this.shownImages.length + this.segImages.length + this.maskImages.length)) {
       this.loading = false;
     }
+  }
+
+  openDamagedPartModal(image_idx: number, damage_idx: number) {
+    this.change(image_idx, damage_idx);
+    this.damagedPartModalVisible = true;
+  }
+
+  getExplanationText(): string {
+    if (this.maskButtonPressed) {
+      return segmentationText;
+    }
+
+    if (this.bbButtonPressed || this.chosenDamageType !== undefined) {
+      return damageDescriptions[this.chosenDamageType];
+    }
+
+    if (this.started) {
+      return explanationText;
+    }
+
+    return projectDescription;
   }
 }

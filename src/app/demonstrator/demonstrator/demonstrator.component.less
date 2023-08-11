@@ -27,7 +27,7 @@
     border-right: 1px black solid;
 
     .explanation-text {
-      font-size: 18px;
+      font-size: 14px;
     }
   }
 
@@ -60,5 +60,31 @@
     background-color: #F5F5F5;
     height: 50px;
     border-bottom: 0.5px solid black;
+  }
+
+  .all_images {
+    position: relative;
+    height: 100%;
+    width: 100%;
+  }
+
+  .layered_image {
+    position: absolute;
+  }
+
+  .hidden_image {
+    visibility: hidden;
+  }
+
+  .first_image {
+    z-index: 30;
+  }
+
+  .second_image {
+    z-index: 20;
+  }
+
+  .third_image {
+    z-index: 10;
   }
 }

@@ -1,20 +1,20 @@
 <nz-layout fxFill>
   <div class="border-bottom-grey" fxLayoutAlign="space-between center">
-    <img nz-image class="no_pointer_events asag-logo" nzSrc="assets/asag_logo.png"/>
+    <img nz-image class="no_pointer_events asag-logo" nzSrc="assets/asag_logo.png" alt="The project logo."/>
     <div class="header-title">ASaG Demonstrator</div>
-    <img nz-image class="no_pointer_events buw-tmdt-logo" nzSrc="assets/tmdt.png"/>
+    <img nz-image class="no_pointer_events buw-tmdt-logo" nzSrc="assets/tmdt.png" alt="The Logo of the Institute of TMDT"/>
   </div>
 
   <nz-content fxLayout="row" fxLayoutAlign="center center" class="all">
       <!-- The left side of the demonstrator. -->
       <div *ngIf="!started" fxLayout="column" class="selfmade-menu">
-        <p class="explanation-text">{{projectDescription}}</p>
+        <div class="explanation-text" [innerHTML]="getExplanationText()"></div>
         <nz-divider></nz-divider>
         <button nz-button (click)="started = true">Start</button>
       </div>
 
     <div *ngIf="started" fxLayout="column" class="selfmade-menu">
-      <p class="explanation-text">{{explanationText}}</p>
+      <p class="explanation-text">{{getExplanationText()}}</p>
       <nz-divider></nz-divider>
 
       <div class="radio-button-wrapper" fxLayout="column" fxLayoutAlign="center " fxLayoutGap="5px">
@@ -59,12 +59,12 @@
           </div>
         </div>
 
-        <div style="height: 100%" *ngIf="!loading && started">
-          <div style="height: 100%" *ngIf="!bbButtonPressed" fxLayout="column" fxLayoutAlign="space-evenly center">
-            <img *ngFor="let imgSource of previewImages" class="aoi_image" [src]="imgSource" alt="Girl in a jacket" [height]="imageHeight">
+        <div style="height: 100%; width: 100%" *ngIf="!loading && started">
+          <div style="height: 100%" *ngIf="!chosenDamageType" fxLayout="column" fxLayoutAlign="space-evenly center">
+            <img *ngFor="let imgSource of shownImages" class="aoi_image" [src]="imgSource" alt="Girl in a jacket" [height]="imageHeight">
           </div>
 
-          <div style="height: 100%" *ngIf="bbButtonPressed" fxLayout="column" fxLayoutAlign="space-evenly center">
+          <div style="height: 100%" *ngIf="chosenDamageType" fxLayout="column" fxLayoutAlign="space-evenly center">
             <map *ngFor="let coord of coords, let idx=index" name="aoi_{{idx}}">
               <area *ngFor="let c of coord, let i=index"
                     shape="rect" alt="Area of Interest"
@@ -75,9 +75,15 @@
                     (nzPopoverVisibleChange)="change(idx, i)"
                     coords="{{c.x1}} {{c.y1}} {{c.x2}} {{c.y2}}"
                     (mouseenter)="mouseEnteredArea(idx, i)"
-                    (mouseleave)="mouseLeftArea()">
+                    (mouseleave)="mouseLeftArea()"
+                    (click)="openDamagedPartModal(idx, i)">
             </map>
-            <img *ngFor="let imgSource of previewImages, let i=index" useMap="#aoi_{{i}}"  class="aoi_image" id="target_{{i}}" [src]="imgSource" alt="Girl with a box" [height]="imageHeight">
+
+            <div class="all_images" *ngFor="let _ of shownImages, let i=index" fxLayout="column" fxLayoutAlign="space-evenly center">
+              <img class="aoi_image layered_image first_image" [ngClass]="{'hidden_image': bbButtonPressed}" [src]="shownImages[i]" alt="Girl in a jacket" [height]="imageHeight">
+              <img class="aoi_image layered_image second_image" useMap="#aoi_{{i}}" [ngClass]="{'hidden_image': maskButtonPressed}" [src]="segImages[i]" alt="Girl in a jacket" [height]="imageHeight">
+              <img class="aoi_image layered_image third_image" [src]="maskImages[i]" alt="Girl in a jacket" [height]="imageHeight">
+            </div>
           </div>
         </div>
 
@@ -87,6 +93,14 @@
       </div>
   </nz-content>
 </nz-layout>
+
+<nz-modal [(nzVisible)]="damagedPartModalVisible" nzTitle="The damaged part:" (nzOnCancel)="damagedPartModalVisible = false" [nzFooter]="null">
+  <ng-container *nzModalContent>
+    <div fxLayoutAlign="center center">
+      <img nz-image class="no_pointer_events" [nzSrc]="enhancedDamagedPartSrc" alt="A damaged train part. Due." height="400">
+    </div>
+  </ng-container>
+</nz-modal>
 
 <ng-template #damagedPartTpl>
   <img [src]="enhancedDamagedPartSrc" alt="A damaged train part. Due." height="400">
