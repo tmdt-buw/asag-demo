@@ -1,6 +1,8 @@
 <nz-layout fxFill>
   <div class="border-bottom-grey" fxLayoutAlign="space-between center">
-    <img nz-image class="no_pointer_events asag-logo" nzSrc="assets/asag_logo.png" alt="The project logo."/>
+    <div class="pointy_finger" (click)="resetToStartPage()">
+      <img nz-image class="no_pointer_events asag-logo" nzSrc="assets/asag_logo.png" alt="The project logo."/>
+    </div>
     <div class="header-title">ASaG Demonstrator</div>
     <img nz-image class="no_pointer_events buw-tmdt-logo" nzSrc="assets/tmdt.png" alt="The Logo of the Institute of TMDT"/>
   </div>
@@ -39,21 +41,21 @@
       <div class="image-area" id="image-area">
         <div style="height: 100%" *ngIf="!loading && !started" fxLayout="column" fxLayoutAlign="space-evenly">
           <div fxLayout="row" fxLayoutAlign="space-around">
-            <video #videoPlayer1 (ended)="videoPlayer2.play()" [autoplay]="true" [muted]="true" preload="auto" [height]="videoHeight">
+            <video #videoPlayer1 (loadedmetadata)="calculateVideoHeight()" (ended)="videoPlayer2.play()" [autoplay]="true" [muted]="true" preload="auto" [width]="videoWidth" [height]="videoHeight">
               <source src="assets/videos/Media1.mp4">
             </video>
 
-            <video #videoPlayer2 (ended)="videoPlayer3.play()" [autoplay]="false" [muted]="true" preload="auto" [height]="videoHeight">
+            <video #videoPlayer2 (ended)="videoPlayer3.play()" [autoplay]="false" [muted]="true" preload="auto" [width]="videoWidth" [height]="videoHeight">
               <source src="assets/videos/Media2.mp4">
             </video>
           </div>
 
           <div fxLayout="row" fxLayoutAlign="space-around">
-            <video #videoPlayer3 (ended)="videoPlayer4.play()" [autoplay]="false" [muted]="true" preload="auto" [height]="videoHeight">
+            <video #videoPlayer3 (ended)="videoPlayer4.play()" [autoplay]="false" [muted]="true" preload="auto" [width]="videoWidth" [height]="videoHeight">
               <source src="assets/videos/Media3.mp4">
             </video>
 
-            <video #videoPlayer4 (ended)="videoPlayer1.play()" [autoplay]="false" [muted]="true" preload="auto" [height]="videoHeight">
+            <video #videoPlayer4 (ended)="videoPlayer1.play()" [autoplay]="false" [muted]="true" preload="auto" [width]="videoWidth" [height]="videoHeight">
               <source src="assets/videos/Media4.mp4">
             </video>
           </div>

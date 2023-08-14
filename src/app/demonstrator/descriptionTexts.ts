@@ -1,9 +1,8 @@
 
-export const segmentationText: string = `Güterwagen werden anhand ihrer Bauweise und ihres Einsatzzweckes in eine Vielzahl von Gattungen kategorisiert. Abgesehen von einigen gattungsübergreifenden Schadensarten,
-sind die häufigsten auftretenden Mängel und Schäden spezifisch für die jeweils betrachtete Wagengattung. Das Szenario ist demnach ideal um verschiedenste Ansätze der Deep
-Learning basierten Computer Vision und ihre Übertragbarkeit, im Kontext der visuellen Inspektion in der Instandhaltung, zu evaluieren.
-Die Anwendungsfälle sind zusätzlich durch verschiedene Herausforderungen charakterisiert, wie z.B. hohe Variation innerhalb einer Schadenskategorie, eine große Anzahl von
-Schadenskategorien pro Bild, oder die Größe der zu erkennenden Schäden.`;
+export const segmentationText: string = `Objekterkennung ist nur in der Lage Objekte durch rechteckige Boxen zu markieren und zu klassifizieren. Es ist somit nicht möglich die Verbiegung eines Bauteils explizit zu bestimmen
+und mit dem maximal zulässigen Wert zu vergleichen. Aus diesem Grund setzten wir für die Anwendungsfälle Rungen und Ecktritte, bei denen Verbiegung relevant ist, das "Segment anything
+model" (SAM) ein um die exakte Kontur des Bauteils ausmachen zu können. Basierend auf der ausgegebenen Segmentierungsmaske kann dann die Verbiegung der Runge/des Ecktritts bestimmt
+werden.`;
 
 
 export const projectDescription: string = `

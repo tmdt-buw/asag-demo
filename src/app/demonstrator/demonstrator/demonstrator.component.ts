@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { positionInPercentage } from '../positionsBB/positions';
 import {segmentationText, explanationText, projectDescription, damageDescriptions} from "../descriptionTexts";
 
@@ -13,7 +13,10 @@ export class DemonstratorComponent implements OnInit {
   segImages: string[] = []
   maskImages: string[] = []
   imageHeight: number = 0;
+
+  @ViewChild('videoPlayer1') videoPlayer1;
   videoHeight: number = 0;
+  videoWidth: number = 0;
 
   chosenDamageType: string = undefined;
   boundingBoxButtonVisible: boolean = false;
@@ -47,7 +50,7 @@ export class DemonstratorComponent implements OnInit {
   started: boolean = false;
 
   ngOnInit(): void {
-    this.calculateVideoHeight();
+    // this.calculateVideoHeight();
     this.selectRandomImages();
     this.calculateImageHeight();
 
@@ -55,10 +58,27 @@ export class DemonstratorComponent implements OnInit {
   }
 
   calculateVideoHeight(): void {
-    const img_area: HTMLElement = document.getElementById('image-area')
-    const height: number = img_area.clientHeight;
+    // w = width of the video
+    const w = this.videoPlayer1.nativeElement.videoWidth
+    // h = height of the video
+    const h = this.videoPlayer1.nativeElement.videoHeight
 
-    this.videoHeight = (height*0.85) / 2;
+    const img_area: HTMLElement = document.getElementById('image-area')
+    const maximalAllowedHeight: number = img_area.clientHeight;
+    const maximalAllowedWidth: number = img_area.clientWidth * .9;
+
+    let finalHeight = (maximalAllowedHeight*0.85) / 2;
+    let scaling = finalHeight / h;
+    let resolvingWidth = w * scaling;
+
+    if (resolvingWidth * 2 > maximalAllowedWidth) {
+      resolvingWidth = maximalAllowedWidth / 2
+      scaling = resolvingWidth / w;
+      finalHeight = scaling * h;
+    }
+
+    this.videoHeight = finalHeight;
+    this.videoWidth = resolvingWidth;
   }
 
   randomIntFromInterval(min: number, max: number): number {
@@ -225,5 +245,11 @@ export class DemonstratorComponent implements OnInit {
     }
 
     return projectDescription;
+  }
+
+  resetToStartPage() {
+    this.resetEverything();
+    this.chosenDamageType = undefined;
+    this.started = false;
   }
 }
