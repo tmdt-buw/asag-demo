@@ -251,5 +251,6 @@ export class DemonstratorComponent implements OnInit {
     this.resetEverything();
     this.chosenDamageType = undefined;
     this.started = false;
+    this.selectRandomImages();
   }
 }
