@@ -8,15 +8,15 @@
   </div>
 
   <nz-content fxLayout="row" fxLayoutAlign="center center" class="all">
-      <!-- The left side of the demonstrator. -->
-      <div *ngIf="!started" fxLayout="column" class="selfmade-menu">
-        <div class="explanation-text" [innerHTML]="getExplanationText()"></div>
-        <nz-divider></nz-divider>
-        <button nz-button (click)="started = true">Start</button>
-      </div>
+    <!-- The left side of the demonstrator. -->
+    <div *ngIf="!started" fxLayout="column" class="selfmade-menu">
+      <div class="explanation-text" [innerHTML]="getExplanationText()"></div>
+      <nz-divider></nz-divider>
+      <button nz-button (click)="started = true">Start</button>
+    </div>
 
     <div *ngIf="started" fxLayout="column" class="selfmade-menu">
-      <p class="explanation-text">{{getExplanationText()}}</p>
+      <p class="explanation-text">{{ getExplanationText() }}</p>
       <nz-divider></nz-divider>
 
       <div class="radio-button-wrapper" fxLayout="column" fxLayoutAlign="center " fxLayoutGap="5px">
@@ -100,6 +100,14 @@
   <ng-container *nzModalContent>
     <div fxLayoutAlign="center center">
       <img nz-image class="no_pointer_events" [nzSrc]="enhancedDamagedPartSrc" alt="A damaged train part. Due." height="400">
+    </div>
+  </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="showHeightWidthWarning" nzTitle="Warning!" (nzOnCancel)="showHeightWidthWarning = false" [nzFooter]="null">
+  <ng-container *nzModalContent>
+    <div fxLayoutAlign="center center">
+      <p>This website was not designed to be viewed on small screens like a mobile phone! Please keep in mind, that on a small screen this website might look like shit.</p>
     </div>
   </ng-container>
 </nz-modal>

@@ -1,6 +1,6 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { positionInPercentage } from '../positionsBB/positions';
-import {segmentationText, explanationText, projectDescription, damageDescriptions} from "../descriptionTexts";
+import { segmentationText, explanationText, projectDescription, damageDescriptions } from "../descriptionTexts";
 
 @Component({
   selector: 'app-demonstrator',
@@ -9,6 +9,10 @@ import {segmentationText, explanationText, projectDescription, damageDescription
 })
 export class DemonstratorComponent implements OnInit {
   loading: boolean = true;
+  showHeightWidthWarning: boolean = false;
+  minHeight: number = 540;
+  minWidth: number = 910
+
   shownImages: string[] = []
   segImages: string[] = []
   maskImages: string[] = []
@@ -49,27 +53,38 @@ export class DemonstratorComponent implements OnInit {
 
   started: boolean = false;
 
+  constructor() {
+  }
+
   ngOnInit(): void {
-    // this.calculateVideoHeight();
     this.selectRandomImages();
     this.calculateImageHeight();
+    this.checkForSizeAndShowWarning();
 
+    this.loading = false;
+  }
+  @HostListener('window:resize', ['$event'])
+  onResize(_: any): void {
+    this.loading = true;
+    this.calculateImageHeight();
+    this.calculateVideoHeight();
+    this.checkForSizeAndShowWarning();
     this.loading = false;
   }
 
   calculateVideoHeight(): void {
     // w = width of the video
-    const w = this.videoPlayer1.nativeElement.videoWidth
+    const w: number = this.videoPlayer1.nativeElement.videoWidth;
     // h = height of the video
-    const h = this.videoPlayer1.nativeElement.videoHeight
+    const h: number = this.videoPlayer1.nativeElement.videoHeight;
 
     const img_area: HTMLElement = document.getElementById('image-area')
     const maximalAllowedHeight: number = img_area.clientHeight;
     const maximalAllowedWidth: number = img_area.clientWidth * .9;
 
-    let finalHeight = (maximalAllowedHeight*0.85) / 2;
-    let scaling = finalHeight / h;
-    let resolvingWidth = w * scaling;
+    let finalHeight: number = (maximalAllowedHeight*0.85) / 2;
+    let scaling: number = finalHeight / h;
+    let resolvingWidth: number = w * scaling;
 
     if (resolvingWidth * 2 > maximalAllowedWidth) {
       resolvingWidth = maximalAllowedWidth / 2
@@ -252,5 +267,14 @@ export class DemonstratorComponent implements OnInit {
     this.chosenDamageType = undefined;
     this.started = false;
     this.selectRandomImages();
+  }
+
+  checkForSizeAndShowWarning(): void {
+    const screenWidth: number = window.innerWidth;
+    const screenHeight: number = window.innerHeight;
+
+    if (screenWidth <= this.minWidth || screenHeight < this.minHeight) {
+      this.showHeightWidthWarning = true;
+    }
   }
 }
