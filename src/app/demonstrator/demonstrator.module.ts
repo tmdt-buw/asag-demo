@@ -4,16 +4,20 @@ import { RouterModule } from "@angular/router";
 import { demonstratorRoutes } from "./demonstrator-routes";
 import { SharedModule } from "../shared.module";
 import { DemonstratorComponent } from './demonstrator/demonstrator.component';
+import { HomeComponent } from './home/home.component';
+import {NzIconModule} from "ng-zorro-antd/icon";
 
 
 @NgModule({
   declarations: [
-    DemonstratorComponent
+    DemonstratorComponent,
+    HomeComponent
   ],
-    imports: [
-        RouterModule.forChild(demonstratorRoutes),
-        CommonModule,
-        SharedModule
-    ]
+  imports: [
+    RouterModule.forChild(demonstratorRoutes),
+    CommonModule,
+    SharedModule,
+    NzIconModule
+  ]
 })
 export class DemonstratorModule { }

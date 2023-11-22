@@ -17,6 +17,7 @@ export class DemonstratorComponent implements OnInit {
   segImages: string[] = []
   maskImages: string[] = []
   imageHeight: number = 0;
+  imageWidth: number = 0;
 
   @ViewChild('videoPlayer1') videoPlayer1;
   videoHeight: number = 0;
@@ -67,7 +68,9 @@ export class DemonstratorComponent implements OnInit {
   onResize(_: any): void {
     this.loading = true;
     this.calculateImageHeight();
-    this.calculateVideoHeight();
+    if (!this.started) {
+      this.calculateVideoHeight();
+    }
     this.checkForSizeAndShowWarning();
     this.loading = false;
   }
@@ -119,9 +122,10 @@ export class DemonstratorComponent implements OnInit {
 
   calculateBBcoords(height, maxWidth): void {
     positionInPercentage[this.chosenDamageType].forEach((imgInfo) => {
-      const scalingFactor: number = (height / imgInfo.original_y);
-      const theoreticalNewWidth: number = (imgInfo.original_x * scalingFactor);
-      const width = theoreticalNewWidth > maxWidth ? maxWidth : theoreticalNewWidth;
+      // const scalingFactor: number = (height / imgInfo.original_y);
+      // const theoreticalNewWidth: number = (imgInfo.original_x * scalingFactor);
+      // const width = theoreticalNewWidth > maxWidth ? maxWidth : theoreticalNewWidth;
+      const width = maxWidth;
 
       let tmp = [];
       imgInfo.coords.forEach((c) => {
@@ -145,6 +149,8 @@ export class DemonstratorComponent implements OnInit {
       this.imageHeight = (height * 0.98) / amount;
       this.imageHeight = this.imageHeight - 1.5 * (this.imageHeight / 100);
     }
+
+    this.imageWidth = width;
 
     this.coords = []
     if (this.chosenDamageType) {

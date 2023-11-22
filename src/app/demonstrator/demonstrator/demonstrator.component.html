@@ -1,16 +1,16 @@
 <nz-layout fxFill>
-  <div class="border-bottom-grey" fxLayoutAlign="space-between center">
-    <div class="pointy_finger" (click)="resetToStartPage()">
-      <img nz-image class="no_pointer_events asag-logo" nzSrc="assets/asag_logo.png" alt="The project logo."/>
-    </div>
-    <div class="header-title">ASaG Demonstrator</div>
+  <div class="border-bottom-grey" fxLayoutAlign="end center">
+<!--    <div class="pointy_finger" (click)="resetToStartPage()">-->
+<!--      <img nz-image class="no_pointer_events asag-logo" nzSrc="assets/asag_logo.png" alt="The project logo."/>-->
+<!--    </div>-->
     <img nz-image class="no_pointer_events buw-tmdt-logo" nzSrc="assets/tmdt.png" alt="The Logo of the Institute of TMDT"/>
   </div>
 
   <nz-content fxLayout="row" fxLayoutAlign="center center" class="all">
     <!-- The left side of the demonstrator. -->
     <div *ngIf="!started" fxLayout="column" class="selfmade-menu">
-      <div class="explanation-text" [innerHTML]="getExplanationText()"></div>
+      <img nz-image class="no_pointer_events asag-logo" nzSrc="assets/asag_logo.png" alt="The project logo."/>
+<!--      <div class="explanation-text" [innerHTML]="getExplanationText()"></div>-->
       <nz-divider></nz-divider>
       <button nz-button (click)="started = true">Start</button>
     </div>
@@ -63,7 +63,7 @@
 
         <div style="height: 100%; width: 100%" *ngIf="!loading && started">
           <div style="height: 100%" *ngIf="!chosenDamageType" fxLayout="column" fxLayoutAlign="space-evenly center">
-            <img *ngFor="let imgSource of shownImages" class="aoi_image" [src]="imgSource" alt="Girl in a jacket" [height]="imageHeight">
+            <img *ngFor="let imgSource of shownImages" class="aoi_image" [src]="imgSource" alt="Girl in a jacket" [height]="imageHeight" [width]="imageWidth">
           </div>
 
           <div style="height: 100%" *ngIf="chosenDamageType" fxLayout="column" fxLayoutAlign="space-evenly center">
@@ -82,9 +82,9 @@
             </map>
 
             <div class="all_images" *ngFor="let _ of shownImages, let i=index" fxLayout="column" fxLayoutAlign="space-evenly center">
-              <img class="aoi_image layered_image first_image" [ngClass]="{'hidden_image': bbButtonPressed}" [src]="shownImages[i]" alt="Girl in a jacket" [height]="imageHeight">
-              <img class="aoi_image layered_image second_image" useMap="#aoi_{{i}}" [ngClass]="{'hidden_image': maskButtonPressed}" [src]="segImages[i]" alt="Girl in a jacket" [height]="imageHeight">
-              <img class="aoi_image layered_image third_image" [src]="maskImages[i]" alt="Girl in a jacket" [height]="imageHeight">
+              <img class="aoi_image layered_image first_image" [ngClass]="{'hidden_image': bbButtonPressed}" [src]="shownImages[i]" alt="Girl in a jacket" [height]="imageHeight" [width]="imageWidth">
+              <img class="aoi_image layered_image second_image" useMap="#aoi_{{i}}" [ngClass]="{'hidden_image': maskButtonPressed}" [src]="segImages[i]" alt="Girl in a jacket" [height]="imageHeight" [width]="imageWidth">
+              <img class="aoi_image layered_image third_image" [src]="maskImages[i]" alt="Girl in a jacket" [height]="imageHeight" [width]="imageWidth">
             </div>
           </div>
         </div>

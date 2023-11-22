@@ -1,0 +1,31 @@
+:host {
+  @tmdt-logo-height: 50px;
+
+  .homeHeader {
+    .whole_page {
+      min-width: 1200px;
+      height: calc(100vh - @tmdt-logo-height);
+      background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+      url('~src/assets/img/background.png') no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+
+      .forwardButton {
+        position: absolute;
+        bottom: 5%;
+        right: 5%;
+        z-index: 99;
+      }
+    }
+
+    .header_title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .buw-tmdt-logo {
+      height: @tmdt-logo-height;
+      width: auto;
+    }
+  }
+}
