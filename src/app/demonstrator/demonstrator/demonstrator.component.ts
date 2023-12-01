@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { positionInPercentage } from '../positionsBB/positions';
-import { segmentationText, explanationText, projectDescription, damageDescriptions } from "../descriptionTexts";
+import { segmentationText, explanationText, projectDescription, damageDescriptions, slideTexts, slideTitles } from "../descriptionTexts";
 
 @Component({
   selector: 'app-demonstrator',
@@ -13,7 +13,8 @@ export class DemonstratorComponent implements OnInit {
   minHeight: number = 540;
   minWidth: number = 910
 
-  shownImages: string[] = []
+
+  shownImages: [string, string, number][] = []
   segImages: string[] = []
   maskImages: string[] = []
   imageHeight: number = 0;
@@ -23,10 +24,10 @@ export class DemonstratorComponent implements OnInit {
   videoHeight: number = 0;
   videoWidth: number = 0;
 
-  chosenDamageType: string = undefined;
+  chosenDamageType: string = 'random';
   boundingBoxButtonVisible: boolean = false;
-  maskButtonVisible: boolean = false;
   bbButtonPressed: boolean = false;
+  maskButtonVisible: boolean = false;
   maskButtonPressed: boolean = false;
 
   damagedPartModalVisible: boolean = false;
@@ -44,15 +45,18 @@ export class DemonstratorComponent implements OnInit {
       images: [1, 2, 3]
     },
     'steps': {
-      imgSource: 'assets/defrag',
+      imgSource: 'assets/steps',
       images: [1, 2, 3, 4, 5]
     }
   }
 
   coords: { x1: number, y1: number, x2: number, y2: number }[][] = [];
   private amountLoaded: number = 0;
+  protected readonly slideTitles: {} = slideTitles;
+  protected readonly slideTexts: {} = slideTexts;
 
   started: boolean = false;
+  slideNumber: number = 0;
 
   constructor() {
   }
@@ -60,6 +64,7 @@ export class DemonstratorComponent implements OnInit {
   ngOnInit(): void {
     this.selectRandomImages();
     this.calculateImageHeight();
+    this.setBoundingBoxesForSegImg()
     this.checkForSizeAndShowWarning();
 
     this.loading = false;
@@ -68,7 +73,7 @@ export class DemonstratorComponent implements OnInit {
   onResize(_: any): void {
     this.loading = true;
     this.calculateImageHeight();
-    if (!this.started) {
+    if (this.slideNumber == 0) {
       this.calculateVideoHeight();
     }
     this.checkForSizeAndShowWarning();
@@ -85,59 +90,75 @@ export class DemonstratorComponent implements OnInit {
     const maximalAllowedHeight: number = img_area.clientHeight;
     const maximalAllowedWidth: number = img_area.clientWidth * .9;
 
-    let finalHeight: number = (maximalAllowedHeight*0.85) / 2;
+    let finalHeight: number = (maximalAllowedHeight*0.85);
     let scaling: number = finalHeight / h;
     let resolvingWidth: number = w * scaling;
 
-    if (resolvingWidth * 2 > maximalAllowedWidth) {
-      resolvingWidth = maximalAllowedWidth / 2
-      scaling = resolvingWidth / w;
-      finalHeight = scaling * h;
-    }
-
     this.videoHeight = finalHeight;
-    this.videoWidth = resolvingWidth;
+    this.videoWidth = resolvingWidth * 0.75;
   }
 
   randomIntFromInterval(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1) + min)
   }
 
-  selectImage(): string {
+  selectImage(): [string, string, number] {
     let key: string = this.picture_keys[this.randomIntFromInterval(0, 2)];
     let pics = this.pictures[key];
     let src: string = pics.imgSource;
     let chosenImage: number = this.randomIntFromInterval(1, pics.images.length)
 
-    return `${src}/${key}_${chosenImage}.jpg`
+    return [`${src}/${key}_${chosenImage}.jpg`, key, chosenImage]
   }
 
   selectRandomImages(): void {
-    let imageSet: Set<string> = new Set<string>();
-    while (imageSet.size < 5) {
-      imageSet.add(this.selectImage());
+    let imageSet: Set<[string, string, number]> = new Set<[string, string, number]>();
+    let intermediateSet: Set<string> = new Set<string>();
+    let lastSize = intermediateSet.size
+    while (intermediateSet.size < 5) {
+      let img: [string, string, number] = this.selectImage()
+      intermediateSet.add(img[0])
+
+      if (lastSize < intermediateSet.size) {
+        imageSet.add(img);
+      }
+      lastSize = intermediateSet.size
     }
     this.shownImages = Array.from(imageSet.values());
   }
 
-  calculateBBcoords(height, maxWidth): void {
-    positionInPercentage[this.chosenDamageType].forEach((imgInfo) => {
-      // const scalingFactor: number = (height / imgInfo.original_y);
-      // const theoreticalNewWidth: number = (imgInfo.original_x * scalingFactor);
-      // const width = theoreticalNewWidth > maxWidth ? maxWidth : theoreticalNewWidth;
-      const width = maxWidth;
+  setBoundingBoxesForSegImg(): void {
+    this.shownImages.forEach((img: [string, string, number]) => {
+      const bbCords = positionInPercentage[img[1]][img[2]-1];
+      const img_area: HTMLElement = document.getElementById('image-area')
+      const height: number = this.imageHeight;
+      const width: number = img_area.clientWidth * .9;
 
       let tmp = [];
-      imgInfo.coords.forEach((c) => {
+      bbCords.coords.forEach((c: { x1: number; y1: number; x2: number; y2: number; }) => {
         tmp.push({
           x1: c.x1 * width,
           y1: c.y1 * height,
           x2: c.x2 * width,
           y2: c.y2 * height,
         });
-      });
+      })
+
       this.coords.push(tmp);
+    })
+
+    this.setSegAndMaskImages();
+  }
+
+  setSegAndMaskImages(): void {
+    this.shownImages.forEach((img) => {
+      this.segImages.push(`assets/${img[1]}/` + 'seg_' + `${img[1]}_${img[2]}.jpg`)
+      this.maskImages.push(`assets/${img[1]}/` + 'mask_' + `${img[1]}_${img[2]}.png`)
     });
+
+    console.log("SetSegAndMaskImages() has been called.")
+    console.log(this.segImages)
+    console.log(this.maskImages)
   }
 
   calculateImageHeight(amount: number = 5) {
@@ -151,30 +172,12 @@ export class DemonstratorComponent implements OnInit {
     }
 
     this.imageWidth = width;
-
-    this.coords = []
-    if (this.chosenDamageType) {
-      this.calculateBBcoords(this.imageHeight, width);
-    }
-  }
-
-  setImages(pre: string = "", fileType: string = '.jpg'): void {
-    const pics = this.pictures[this.chosenDamageType];
-    const src: string = pics.imgSource;
-
-    pics.images.forEach((i: number) => {
-      this.shownImages.push(`${src}/` + pre + `${this.chosenDamageType}_${i}` + fileType)
-      this.segImages.push(`${src}/` + 'seg_' + `${this.chosenDamageType}_${i}` + fileType)
-      this.maskImages.push(`${src}/` + 'mask_' + `${this.chosenDamageType}_${i}` + '.png')
-    });
-
-    this.calculateImageHeight(this.shownImages.length);
   }
 
   resetEverything(): void {
-    this.bbButtonPressed = false;
     this.maskButtonPressed = false;
     this.maskButtonVisible = false;
+    this.bbButtonPressed = false;
     this.boundingBoxButtonVisible = false;
     this.shownImages = []
     this.segImages = []
@@ -187,23 +190,30 @@ export class DemonstratorComponent implements OnInit {
     this.loading = true;
 
     this.resetEverything();
-    this.setImages();
     this.loadImages();
 
     this.boundingBoxButtonVisible = true;
   }
+  changeDamageType(): void {
+    this.resetEverything();
+    this.loading = true;
+    if (['steps', 'rungen', 'holes'].includes(this.chosenDamageType)) {
+      const pics = this.pictures[this.chosenDamageType];
+      const src: string = pics.imgSource;
 
-  showBoundingBoxImages(): void {
-    this.calculateImageHeight(this.shownImages.length);
-    this.bbButtonPressed = true;
-    this.maskButtonVisible = true;
+      pics.images.forEach((i: number) => {
+        this.shownImages.push([`${src}/${this.chosenDamageType}_${i}` + '.jpg', this.chosenDamageType, i])
+      });
+      this.calculateImageHeight(this.shownImages.length);
+    } else {
+      this.selectRandomImages();
+    }
+
+    this.setBoundingBoxesForSegImg()
+    this.loadImages();
   }
 
-  showMaskImages(): void {
-    this.maskButtonPressed = true;
-  }
-
-  mouseEnteredArea(image_idx, damage_idx: number) {
+  mouseEnteredArea(image_idx: any, damage_idx: number) {
     console.log(`Entered bounding box #${damage_idx} of image ${image_idx}.`)
   }
 
@@ -212,8 +222,11 @@ export class DemonstratorComponent implements OnInit {
   }
 
   change(image_idx: number, damage_idx: number) {
-    const src = this.pictures[this.chosenDamageType].imgSource;
-    this.enhancedDamagedPartSrc = `${src}/` + 'crop_' + `${this.chosenDamageType}_${image_idx+1}` + `_${damage_idx}` + `.jpg`
+    const damageType = this.shownImages[image_idx][1]
+    const usedImageIdx = this.shownImages[image_idx][2]
+
+    const src = this.pictures[damageType].imgSource;
+    this.enhancedDamagedPartSrc = `${src}/` + 'crop_' + `${damageType}_${usedImageIdx}` + `_${damage_idx}` + `.jpg`
   }
 
   loadImages(): void {
@@ -234,10 +247,10 @@ export class DemonstratorComponent implements OnInit {
         this.loaded()
       }
 
-      img.src = src;
+      img.src = src[0];
       segImg.src = this.segImages[i];
       maskImg.src = this.maskImages[i];
-    })
+    });
   }
 
   loaded() {
@@ -257,7 +270,7 @@ export class DemonstratorComponent implements OnInit {
       return segmentationText;
     }
 
-    if (this.bbButtonPressed || this.chosenDamageType !== undefined) {
+    if (this.chosenDamageType !== undefined) {
       return damageDescriptions[this.chosenDamageType];
     }
 
@@ -270,8 +283,7 @@ export class DemonstratorComponent implements OnInit {
 
   resetToStartPage() {
     this.resetEverything();
-    this.chosenDamageType = undefined;
-    this.started = false;
+    this.chosenDamageType = 'random';
     this.selectRandomImages();
   }
 
@@ -282,5 +294,22 @@ export class DemonstratorComponent implements OnInit {
     if (screenWidth <= this.minWidth || screenHeight < this.minHeight) {
       this.showHeightWidthWarning = true;
     }
+  }
+
+  next(): void {
+    this.slideNumber = this.slideNumber < 1 ? this.slideNumber + 1 : this.slideNumber;
+  }
+
+  prev(): void {
+    this.resetToStartPage();
+    this.slideNumber = this.slideNumber > 0 ? this.slideNumber - 1 : this.slideNumber;
+  }
+
+  detect() {
+    this.bbButtonPressed = true;
+  }
+
+  segement() {
+    this.maskButtonPressed = true;
   }
 }

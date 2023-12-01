@@ -1,13 +1,16 @@
 <nz-layout class="homeHeader">
   <div fxLayoutAlign="space-between center">
-    <img nz-image class="no_pointer_events buw-tmdt-logo" nzSrc="assets/tmdt.png" alt="The Logo of the Institute of TMDT"/>
-    <div class="header_title" fxLayoutAlign=" center">
+    <img nz-image class="no_pointer_events buw-tmdt-logo header_field" nzSrc="assets/tmdt.png" alt="The Logo of the Institute of TMDT"/>
+    <div class="header_title header_field" fxLayoutAlign="center center">
       <div>Visuelle Inspektion</div>
     </div>
-    <div></div>
+    <div class="header_field"></div>
   </div>
 
   <nz-content fxLayoutAlign="center" class="whole_page">
-    <button nz-button nzType="primary" nzSize="large" class="forwardButton" routerLink="/demonstrator">Zur Demo</button>
+    <img nz-image class="no_pointer_events infographic" nzDisablePreview="true" nzSrc="assets/img/ASaG_Infographics.png"/>
+    <button nz-button nzType="primary" nzSize="large" nzDanger class="forwardButton" routerLink="/demonstrator">Zur Demo</button>
   </nz-content>
 </nz-layout>
+
+<app-footer></app-footer>

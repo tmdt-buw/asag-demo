@@ -40,8 +40,25 @@ Holz in Form von Balken oder Stämmen oder verschiedene Arten von Metallträgern
 für die Ladungssicherung dar. Übermäßig verbogene und dadurch eventuell auch instabil gewordene Bauteile sind somit eine Gefahr für das Be- und Entladungspersonal als auch eine
 Einschränkung der generellen Transportsicherheit und müssen frühzeitig und zuverlässig erkannt werden.`;
 
+const slide_0_title: string = `Einführung`
+const slide_0: string = `Das ASaG Projekt ist ein Anwendungsfall der automatisierten visuellen Inspektion im Bereich des Schienengüterverkehrs. Ziel des Projekts ist alle visuell erkennbaren Schäden an Güterwagen automatisiert
+festzustellen. Die Grundlage hierfür liefert Bildmaterial das an Rangierbahnhöfen aufgenommen wird.`
+
+const slide_1_title: string = `KI-Modelle`
+const slide_1: string = `Mit diesen Bildern werdne KI-Modelle anhand von durch Fachexperten annotierte Beispiele trainiert, Schäden zu erkennen. Transfer Learning ermöglicht gute Ergebnisse bereits ab 100-200 Bildern, je nach Schwierigkeit der Inspektionsaufgabe.`
+
 export const damageDescriptions: {} = {
   'steps': stepsDescription,
   'rungen': rungenDescription,
   'holes': holesDescription
+}
+
+export const slideTexts: {} = {
+  0: slide_0,
+  1: slide_1
+}
+
+export const slideTitles: {} = {
+  0: slide_0_title,
+  1: slide_1_title
 }

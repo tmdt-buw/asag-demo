@@ -6,6 +6,7 @@ import { SharedModule } from "../shared.module";
 import { DemonstratorComponent } from './demonstrator/demonstrator.component';
 import { HomeComponent } from './home/home.component';
 import {NzIconModule} from "ng-zorro-antd/icon";
+import {FooterModule} from "../footer/footer.module";
 
 
 @NgModule({
@@ -13,11 +14,12 @@ import {NzIconModule} from "ng-zorro-antd/icon";
     DemonstratorComponent,
     HomeComponent
   ],
-  imports: [
-    RouterModule.forChild(demonstratorRoutes),
-    CommonModule,
-    SharedModule,
-    NzIconModule
-  ]
+    imports: [
+        RouterModule.forChild(demonstratorRoutes),
+        CommonModule,
+        SharedModule,
+        NzIconModule,
+        FooterModule
+    ]
 })
 export class DemonstratorModule { }
