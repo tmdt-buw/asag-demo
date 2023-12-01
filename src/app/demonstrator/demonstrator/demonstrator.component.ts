@@ -88,7 +88,6 @@ export class DemonstratorComponent implements OnInit {
 
     const img_area: HTMLElement = document.getElementById('image-area')
     const maximalAllowedHeight: number = img_area.clientHeight;
-    const maximalAllowedWidth: number = img_area.clientWidth * .9;
 
     let finalHeight: number = (maximalAllowedHeight*0.85);
     let scaling: number = finalHeight / h;
