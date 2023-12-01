@@ -3,6 +3,5 @@ import {DemonstratorComponent} from "./demonstrator/demonstrator.component";
 import {HomeComponent} from "./home/home.component";
 
 export const demonstratorRoutes: Routes = [
-  { path: 'home', component: HomeComponent },
-  { path: 'demonstrator', component: DemonstratorComponent }
+  { path: '', component: DemonstratorComponent }
 ]

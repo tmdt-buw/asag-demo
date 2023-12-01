@@ -1,1 +1,8 @@
-<router-outlet></router-outlet>
+<div *ngIf="!demoStarted" class="whole">
+  <app-home (demoStarted)="demoStarted = $event"></app-home>
+</div>
+<div *ngIf="demoStarted" class="all">
+  <app-demonstrator></app-demonstrator>
+</div>
+
+<app-footer></app-footer>

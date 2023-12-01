@@ -9,8 +9,6 @@
 
   <nz-content fxLayoutAlign="center" class="whole_page">
     <img nz-image class="no_pointer_events infographic" nzDisablePreview="true" nzSrc="assets/img/ASaG_Infographics.png"/>
-    <button nz-button nzType="primary" nzSize="large" nzDanger class="forwardButton" routerLink="/demonstrator">Zur Demo</button>
+    <button nz-button nzType="primary" nzSize="large" nzDanger class="forwardButton" (click)="startDemo()">Zur Demo</button>
   </nz-content>
 </nz-layout>
-
-<app-footer></app-footer>

@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import { positionInPercentage } from '../positionsBB/positions';
 import { segmentationText, explanationText, projectDescription, damageDescriptions, slideTexts, slideTitles } from "../descriptionTexts";
 
@@ -8,7 +8,7 @@ import { segmentationText, explanationText, projectDescription, damageDescriptio
   styleUrls: ['./demonstrator.component.less']
 })
 export class DemonstratorComponent implements OnInit {
-  loading: boolean = true;
+  loading: boolean = false;
   showHeightWidthWarning: boolean = false;
   minHeight: number = 540;
   minWidth: number = 910
@@ -57,8 +57,10 @@ export class DemonstratorComponent implements OnInit {
 
   started: boolean = false;
   slideNumber: number = 0;
+  demoStarted: boolean = false;
 
   constructor() {
+
   }
 
   ngOnInit(): void {
@@ -66,7 +68,6 @@ export class DemonstratorComponent implements OnInit {
     this.calculateImageHeight();
     this.setBoundingBoxesForSegImg()
     this.checkForSizeAndShowWarning();
-
     this.loading = false;
   }
   @HostListener('window:resize', ['$event'])

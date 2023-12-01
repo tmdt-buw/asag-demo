@@ -12,6 +12,8 @@ import { registerLocaleData } from '@angular/common';
 import de from '@angular/common/locales/de';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import {FooterModule} from "./footer/footer.module";
+import {DemonstratorModule} from "./demonstrator/demonstrator.module";
 
 registerLocaleData(de);
 
@@ -25,9 +27,11 @@ registerLocaleData(de);
     BrowserAnimationsModule,
     SharedModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    FooterModule,
+    DemonstratorModule
   ],
-  providers: [ 
+  providers: [
     { provide: NZ_I18N, useValue: de_DE }
   ],
   bootstrap: [AppComponent]

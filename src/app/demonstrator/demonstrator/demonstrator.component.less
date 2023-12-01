@@ -1,4 +1,22 @@
 :host {
+  @tmdt-logo-height: 50px;
+  .whole {
+    min-width: 100vh;
+    height: calc(100vh - @tmdt-logo-height);
+  }
+
+  .infographic {
+    height: 100%;
+    width: 100%;
+  }
+
+  .startDemoButton {
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+    z-index: 99;
+  }
+
   .pointy_finger {
     cursor: pointer;
   }
