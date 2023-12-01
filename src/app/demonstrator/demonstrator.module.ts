@@ -7,14 +7,12 @@ import { DemonstratorComponent } from './demonstrator/demonstrator.component';
 import { HomeComponent } from './home/home.component';
 import {NzIconModule} from "ng-zorro-antd/icon";
 import {FooterModule} from "../footer/footer.module";
-import { TestComponent } from './test/test.component';
 
 
 @NgModule({
   declarations: [
     DemonstratorComponent,
     HomeComponent,
-    TestComponent
   ],
   exports: [
     DemonstratorComponent,
