@@ -155,10 +155,6 @@ export class DemonstratorComponent implements OnInit {
       this.segImages.push(`assets/${img[1]}/` + 'seg_' + `${img[1]}_${img[2]}.jpg`)
       this.maskImages.push(`assets/${img[1]}/` + 'mask_' + `${img[1]}_${img[2]}.png`)
     });
-
-    console.log("SetSegAndMaskImages() has been called.")
-    console.log(this.segImages)
-    console.log(this.maskImages)
   }
 
   calculateImageHeight(amount: number = 5) {
